@@ -12,7 +12,7 @@ from collections import Counter
 st.set_page_config(page_title="AI Ustadh 🕌", page_icon="🕌", layout="centered")
 
 # ====== WEKA LINK YA GOOGLE FORM YAKO YA MAONI HAPA ======
-MAONI_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeuUNkwqq5RwlLP49ziqoGuG8-nzI9fRpMVMfLoG-0ouwPK4A/viewform?pli=1"
+MAONI_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeuUNkwqq5RwlLP49ziqoGuG8-nzI9fRpMVMfLoG-0ouwPK4A/viewform"
 
 # ================= QURAN DATA =================
 @st.cache_data(show_spinner="⏳ Napakua Qur'ani...")
@@ -270,7 +270,7 @@ with st.sidebar:
 # ================= UI =================
 st.title("🕌 AI USTADH")
 st.markdown("**Msaidizi wa Kusoma Qur'an — masahihisho kwa Kiswahili** 🇹🇿  \n"
-            "*Juzuu Amma + Al-Fatihah | by Mpenzi, Dar es Salaam*")
+            "*Juzuu Amma + Al-Fatihah | by Mpenzi-Kiboga, Dar es Salaam*")
 
 tab_somo, tab_hifz, tab_tambua, tab_ripoti = st.tabs(
     ["📖 Somo na Ustadh", "🧠 Hifz Mode", "🔍 Tambua Surah", "📊 Ripoti"])
@@ -314,12 +314,14 @@ with tab_somo:
             for n, a in enumerate(ADABU, 1):
                 st.markdown(f"{n}. {a}")
             import os
-            if os.path.exists("adabu_yangu.mp3"):
-                st.caption("🎙️ Adabu za kusoma Qur'ani:")
-                st.audio("adabu_yangu.mp3", autoplay=True)
-            elif os.path.exists("adabu_yangu.wav"):
-                st.caption("🎙️ Adabu za kusoma Qur'ani:")
-                st.audio("adabu_yangu.wav", autoplay=True)
+            adabu_file = None
+            for ext in ("mp3", "wav", "m4a", "aac", "ogg"):
+                if os.path.exists(f"adabu_yangu.{ext}"):
+                    adabu_file = f"adabu_yangu.{ext}"
+                    break
+            if adabu_file:
+                st.caption("🎙️ Adabu za kusoma Qur'ani — kwa sauti ya Mpenzi-Kiboga:")
+                st.audio(adabu_file, autoplay=True)
             if st.button("✅ Niko tayari — twende!", type="primary", use_container_width=True):
                 ss.phase = "bismillah" if ss.surah != 1 else "ayah"
                 ss.tries = 0
