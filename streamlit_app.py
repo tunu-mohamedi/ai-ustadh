@@ -11,6 +11,49 @@ from collections import Counter
 
 st.set_page_config(page_title="AI Ustadh 🕌", page_icon="🕌", layout="centered")
 
+# ================= MUONEKANO (THEME) =================
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@400;600;700&display=swap');
+
+html, body, [class*="css"] { font-family: 'Poppins', sans-serif; }
+
+.ustadh-header {
+  background: linear-gradient(135deg, #0b5e33 0%, #0e7a42 55%, #d4af37 130%);
+  border-radius: 18px; padding: 1.6rem 1.2rem; text-align: center;
+  margin-bottom: 1rem; box-shadow: 0 6px 18px rgba(11,94,51,0.25);
+}
+.ustadh-header h1 { color: #ffffff; margin: 0; font-size: 2rem; letter-spacing: 1px; }
+.ustadh-header p  { color: #f5e9c9; margin: 0.35rem 0 0 0; font-size: 0.95rem; }
+
+.ayah-box {
+  font-family: 'Amiri', serif; direction: rtl; text-align: center;
+  font-size: 2.3rem; line-height: 2.3;
+  background: linear-gradient(180deg, #f6fbf7 0%, #eaf6ee 100%);
+  border: 1.5px solid #bfe3cc; border-radius: 16px;
+  padding: 1.3rem 1rem; margin: 0.5rem 0 0.8rem 0;
+  box-shadow: inset 0 1px 6px rgba(11,94,51,0.06);
+  color: #143d26;
+}
+.ayah-box.hifz { letter-spacing: 6px; }
+
+.stButton > button[kind="primary"] {
+  background: linear-gradient(135deg, #0b5e33, #0e7a42);
+  border: none; border-radius: 12px; font-weight: 600;
+  box-shadow: 0 4px 12px rgba(11,94,51,0.3);
+}
+.stButton > button[kind="primary"]:hover { background: linear-gradient(135deg, #0e7a42, #12934f); }
+.stButton > button { border-radius: 12px; }
+
+.stTabs [data-baseweb="tab"] { font-weight: 600; }
+.stTabs [aria-selected="true"] { color: #0b5e33 !important; }
+
+.stProgress > div > div > div > div { background: linear-gradient(90deg, #0e7a42, #d4af37); }
+
+.stAlert { border-radius: 12px; }
+</style>
+""", unsafe_allow_html=True)
+
 # ====== WEKA LINK YA GOOGLE FORM YAKO YA MAONI HAPA ======
 MAONI_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeuUNkwqq5RwlLP49ziqoGuG8-nzI9fRpMVMfLoG-0ouwPK4A/viewform"
 
@@ -206,9 +249,9 @@ def finish_session(quit_early=False):
                         "completed": ss.completed, "total": total,
                         "attempts": ss.attempts, "quit": quit_early})
 
-def show_ayah_box(text, size="2rem"):
-    st.markdown(f"<div dir='rtl' style='font-size:{size}; line-height:2.2; text-align:center; "
-                f"padding:1rem; background:rgba(0,128,0,0.06); border-radius:12px'>{text}</div>",
+def show_ayah_box(text, size="2.3rem", hifz=False):
+    cls = "ayah-box hifz" if hifz else "ayah-box"
+    st.markdown(f"<div class='{cls}' style='font-size:{size}'>{text}</div>",
                 unsafe_allow_html=True)
 
 def handle_recitation(correct, surah_num, ayah_num, rec, hidden=False):
@@ -268,9 +311,13 @@ with st.sidebar:
                "maendeleo yako yatahifadhiwa kwenye Ripoti.")
 
 # ================= UI =================
-st.title("🕌 AI USTADH")
-st.markdown("**Msaidizi wa Kusoma Qur'an — masahihisho kwa Kiswahili** 🇹🇿  \n"
-            "*Juzuu Amma + Al-Fatihah | by Mpenzi-Kiboga, Dar es Salaam*")
+st.markdown("""
+<div class="ustadh-header">
+  <h1>🕌 AI USTADH</h1>
+  <p>Msaidizi wa Kusoma Qur'an Tukufu — masahihisho kwa Kiswahili 🇹🇿</p>
+  <p style="opacity:0.85; font-size:0.85rem;">Juzuu Amma + Al-Fatihah &nbsp;•&nbsp; by Mpenzi-Kiboga, Dar es Salaam</p>
+</div>
+""", unsafe_allow_html=True)
 
 tab_somo, tab_hifz, tab_tambua, tab_ripoti = st.tabs(
     ["📖 Somo na Ustadh", "🧠 Hifz Mode", "🔍 Tambua Surah", "📊 Ripoti"])
@@ -433,7 +480,7 @@ with tab_hifz:
             elif ss.peeked > 0:
                 show_ayah_box(" ".join(words[:ss.peeked]) + " …", size="1.6rem")
             else:
-                show_ayah_box("🙈 " * min(len(words), 8), size="1.6rem")
+                show_ayah_box("🙈 " * min(len(words), 8), size="1.6rem", hifz=True)
             pc1, pc2 = st.columns(2)
             with pc1:
                 if st.button("👀 Chungulia neno", use_container_width=True):
