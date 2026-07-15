@@ -319,8 +319,8 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-tab_somo, tab_hifz, tab_tambua, tab_ripoti = st.tabs(
-    ["📖 Somo na Ustadh", "🧠 Hifz Mode", "🔍 Tambua Surah", "📊 Ripoti"])
+tab_somo, tab_hifz, tab_tambua, tab_taf, tab_ripoti = st.tabs(
+    ["📖 Somo", "🧠 Hifz", "🔍 Tambua", "🎧 Tafsiri", "📊 Ripoti"])
 
 # ═══════════════ TAB 1: SOMO (GUIDED SESSION) ═══════════════
 with tab_somo:
@@ -534,7 +534,31 @@ with tab_tambua:
                 st.info(f"🇹🇿 **Tafsiri:** {s2['tafsiri'][m['ayah_num'] - 1]}")
                 sema(f"Nimeitambua! Ni surah {s2['jina']}, ayah ya {m['ayah_num']}.")
 
-# ═══════════════ TAB 4: RIPOTI ═══════════════
+# ═══════════════ TAB 4: TAFSIRI YA SAUTI HALISI ═══════════════
+with tab_taf:
+    st.markdown("### 🎧 Surah nzima + Tafsiri ya Kiswahili")
+    st.caption("Sauti halisi ya binadamu: msomaji anasoma Qur'ani, ikifuatiwa na tafsiri ya "
+               "Kiswahili — aya kwa aya. Nzuri kusikiliza kabla ya kuanza kujifunza surah.")
+    pick_t = st.selectbox("Chagua surah", sorted(surahs),
+                          index=len(surahs) - 1,
+                          format_func=lambda n: f"{n} — {surahs[n]['jina']} ({len(surahs[n]['ayah'])} ayah)",
+                          key="pick_taf")
+    if st.button("🎧 Pakia na Sikiliza", type="primary", use_container_width=True):
+        with st.spinner("⏳ Natafuta sauti..."):
+            ss.taf_url = human_tafsiri_url(pick_t)
+            ss.taf_surah = pick_t
+    if ss.get("taf_url"):
+        st.markdown(f"**🎧 {surahs[ss.taf_surah]['jina']}** — bonyeza ▶ hapa chini. "
+                    "*(Faili ni kubwa — inaweza kuchukua sekunde 10–30 kuanza, "
+                    "kulingana na kasi ya intaneti. Subiri kidogo!)*")
+        st.audio(ss.taf_url)
+        st.link_button("🔗 Kama haichezi: fungua sauti moja kwa moja kwenye browser",
+                       ss.taf_url, use_container_width=True)
+        st.caption("💡 Kupakua: bonyeza ⋮ kwenye kichezaji → Download, au tumia kitufe hapo juu.")
+    elif ss.get("taf_surah") and not ss.get("taf_url"):
+        st.warning("⚠️ Haipatikani kwa surah hii kwa sasa — jaribu surah nyingine.")
+
+# ═══════════════ TAB 5: RIPOTI ═══════════════
 with tab_ripoti:
     st.markdown("### 📊 Ripoti ya Kipindi Hiki")
     st.caption("⚠️ Ripoti hii ni ya kipindi hiki tu — ukifunga ukurasa, inaanza upya. "
@@ -557,19 +581,6 @@ with tab_ripoti:
             for e in ss.log:
                 st.markdown(f"- {e['surah']}, Ayah {e['ayah']}: {e['kosa']}")
 
-    if st.session_state.get("na_tafsiri") is not None:
-        pass
-    st.divider()
-    st.markdown("#### 🎧 Sikiliza surah nzima na tafsiri ya sauti halisi")
-    pick_t = st.selectbox("Chagua surah", sorted(surahs),
-                          format_func=lambda n: f"{n} — {surahs[n]['jina']}",
-                          key="pick_taf")
-    if st.button("🎧 Pakia sauti", use_container_width=True):
-        url = human_tafsiri_url(pick_t)
-        if url:
-            st.audio(url)
-        else:
-            st.warning("Haipatikani kwa surah hii kwa sasa.")
 
 # ================= MAONI =================
 st.divider()
