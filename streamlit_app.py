@@ -281,14 +281,14 @@ with tab_somo:
         st.markdown("### Anza somo la kuongozwa — kama madrasa halisi!")
         st.caption("Ustadh atakukumbusha adabu, mtaanza na Bismillah, kisha ayah kwa ayah: "
                    "Sheikh anasoma → wewe unasoma → unasahihishwa.")
-        c1, c2 = st.columns([3, 1])
-        with c1:
-            pick = st.selectbox("Chagua Surah", sorted(surahs),
-                                index=len(surahs) - 1,
-                                format_func=lambda n: f"{n} — {surahs[n]['jina']} ({len(surahs[n]['ayah'])} ayah)",
-                                key="pick_somo")
-        with c2:
-            ss.na_tafsiri = st.toggle("🇹🇿 Tafsiri", value=True, key="taf_somo")
+        pick = st.selectbox("1️⃣ Chagua Surah", sorted(surahs),
+                            index=len(surahs) - 1,
+                            format_func=lambda n: f"{n} — {surahs[n]['jina']} ({len(surahs[n]['ayah'])} ayah)",
+                            key="pick_somo")
+        taf_choice = st.radio("2️⃣ 🇹🇿 Unataka kusoma NA tafsiri ya Kiswahili?",
+                              ["Ndiyo — na tafsiri", "Hapana — Qur'ani tu"],
+                              horizontal=True, key="taf_somo")
+        ss.na_tafsiri = taf_choice.startswith("Ndiyo")
         if st.button("🕌 ANZA SOMO", type="primary", use_container_width=True):
             reset_session()
             ss.mode, ss.surah, ss.phase = "somo", pick, "adabu"
@@ -333,6 +333,8 @@ with tab_somo:
             show_ayah_box(BISMILLAH)
             if ss.na_tafsiri:
                 st.info(f"🇹🇿 **Tafsiri:** {BISMILLAH_TAFSIRI}")
+                if st.button("🗣️ Sikia tafsiri kwa sauti", key="taf_v_bis"):
+                    sema("Tafsiri yake: " + BISMILLAH_TAFSIRI)
             st.markdown("**👂 Msikilize Sheikh:**")
             st.audio(sheikh_url(1, 1))
             st.markdown("**🎤 Sasa soma Bismillah wewe:**")
@@ -355,6 +357,8 @@ with tab_somo:
             show_ayah_box(correct)
             if ss.na_tafsiri and ss.tries == 0:      # tafsiri jaribio la KWANZA tu
                 st.info(f"🇹🇿 **Tafsiri:** {s['tafsiri'][ss.ayah - 1]}")
+                if st.button("🗣️ Sikia tafsiri kwa sauti", key=f"taf_v_{ss.ayah}"):
+                    sema("Tafsiri yake: " + s["tafsiri"][ss.ayah - 1])
             st.markdown("**👂 Msikilize Sheikh:**")
             st.audio(sheikh_url(ss.surah, ss.ayah))
             st.markdown("**🎤 Sasa soma wewe** — *(sauti YAKO itakuwa NDANI ya kisanduku hiki; "
