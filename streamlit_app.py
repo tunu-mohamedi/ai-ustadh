@@ -131,6 +131,7 @@ def sema(text_sw):
     if st.session_state.get("sauti_on", True):
         audio = sauti_ya_ustadh(text_sw)
         if audio:
+            st.caption("🗣️ Sauti ya USTADH:")
             st.audio(audio, format="audio/mp3", autoplay=True)
 
 RECITERS = {
@@ -312,8 +313,13 @@ with tab_somo:
             st.markdown("#### 🌟 Ukumbusho: Adabu za Kusoma Qur'ani")
             for n, a in enumerate(ADABU, 1):
                 st.markdown(f"{n}. {a}")
-            sema("Bismillahir rahmanir rahim. Karibu mwanafunzi! Kabla hatujaanza, "
-                 "kumbuka adabu za kusoma Qur'ani tukufu. " + " ".join(ADABU))
+            import os
+            if os.path.exists("adabu_yangu.mp3"):
+                st.caption("🎙️ Adabu za kusoma Qur'ani:")
+                st.audio("adabu_yangu.mp3", autoplay=True)
+            elif os.path.exists("adabu_yangu.wav"):
+                st.caption("🎙️ Adabu za kusoma Qur'ani:")
+                st.audio("adabu_yangu.wav", autoplay=True)
             if st.button("✅ Niko tayari — twende!", type="primary", use_container_width=True):
                 ss.phase = "bismillah" if ss.surah != 1 else "ayah"
                 ss.tries = 0
@@ -349,7 +355,8 @@ with tab_somo:
                 st.info(f"🇹🇿 **Tafsiri:** {s['tafsiri'][ss.ayah - 1]}")
             st.markdown("**👂 Msikilize Sheikh:**")
             st.audio(sheikh_url(ss.surah, ss.ayah))
-            st.markdown("**🎤 Sasa soma wewe** *(baada ya kurekodi, bonyeza ▶ kujisikiliza)*:")
+            st.markdown("**🎤 Sasa soma wewe** — *(sauti YAKO itakuwa NDANI ya kisanduku hiki; "
+                        "baada ya kurekodi, bonyeza ▶ yake kujisikiliza)*:")
             rec = st.audio_input("Rekodi", label_visibility="collapsed",
                                  key=f"somo_{ss.ayah}_{ss.tries}")
             if rec and st.button("✅ SAHIHISHA", type="primary", use_container_width=True):
